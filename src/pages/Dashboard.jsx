@@ -3,7 +3,7 @@ import Navbar from './Navbar';
 import AddDriverForm from './AddDrivers';
 import AddFleetUsageForm from './AddFleetUsage';
 import AddMaintenanceForm from './AddMaintenanceForm';
-import AddStatsForm from './AddStatsPage';
+import ViewStatsPage from './ViewStatsPage';
 
 const Dashboard = () => {
     // State for dashboard statistics
@@ -13,7 +13,6 @@ const Dashboard = () => {
         { icon: '👷‍♂️', title: 'Drivers Registered', value: 0 }, // Total registered drivers
         { icon: '🛠️', title: 'Upcoming Maintenance', value: 0 }, // Number of vehicles scheduled for maintenance
     ]);
-
     const [recentActivities, setRecentActivities] = useState([]);
     const [activeForm, setActiveForm] = useState(''); // State to track active form
 
@@ -27,7 +26,7 @@ const Dashboard = () => {
             case 'addMaintenance':
                 return <AddMaintenanceForm onAddMaintenance={handleAddMaintenance} />;
             case 'addStats':
-                return <AddStatsForm />;
+                return <ViewStatsPage />;
             default:
                 return null;
         }
@@ -76,6 +75,21 @@ const Dashboard = () => {
 
     // Fetch dashboard stats and recent activities from your backend
     useEffect(() => {
+        //     fetch('/api/maintenance', {
+//         method: 'POST',
+//         headers: {
+//             'Content-Type': 'application/json',
+//         },
+//         body: JSON.stringify(maintenanceData),
+//     })
+//         .then(response => response.json())
+//         .then(data => {
+//             console.log('Success:', data);
+//         })
+//         .catch(error => {
+//             console.error('Error:', error);
+//         });
+// */
         fetch('/api/dashboard-stats')
             .then((res) => res.json())
             .then((data) => setDashboardStats(data))

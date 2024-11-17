@@ -1,5 +1,5 @@
 // Navbar.js
-import React from 'react';
+import PropTypes from 'prop-types';
 
 const Navbar = ({ setActiveForm }) => {
     return (
@@ -29,12 +29,16 @@ const Navbar = ({ setActiveForm }) => {
                         onClick={() => setActiveForm('addStats')}
                         className="bg-yellow-600 text-white py-2 px-4 rounded"
                     >
-                        Add Stat
+                       View stats
                     </button>
                 </div>
             </div>
         </nav>
     );
+};
+
+Navbar.propTypes = {
+    setActiveForm: PropTypes.func.isRequired,
 };
 
 export default Navbar;
