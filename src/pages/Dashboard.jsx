@@ -132,6 +132,17 @@ const Dashboard = () => {
                         <p className="mt-1 text-sm">Number of vehicles scheduled for maintenance soon.</p>
                     </div>
                 </div>
+
+                {/* Recent Activities Section */}
+                <div className="bg-gray-600 p-4 rounded-lg shadow-md">
+                    <h2 className="text-2xl font-semibold mb-4">Recent Activities</h2>
+                    {recentActivities.map((activity, index) => (
+                        <div key={index} className="mb-3">
+                            <h3 className="text-lg font-medium">{activity.title}</h3>
+                            <p className="text-sm text-gray-500">{activity.date}</p>
+                        </div>
+                    ))}
+                </div>
             </div>
         </div>
     );
