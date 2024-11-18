@@ -75,21 +75,6 @@ const Dashboard = () => {
 
     // Fetch dashboard stats and recent activities from your backend
     useEffect(() => {
-        //     fetch('/api/maintenance', {
-//         method: 'POST',
-//         headers: {
-//             'Content-Type': 'application/json',
-//         },
-//         body: JSON.stringify(maintenanceData),
-//     })
-//         .then(response => response.json())
-//         .then(data => {
-//             console.log('Success:', data);
-//         })
-//         .catch(error => {
-//             console.error('Error:', error);
-//         });
-// */
         fetch('/api/dashboard-stats')
             .then((res) => res.json())
             .then((data) => setDashboardStats(data))
@@ -115,7 +100,7 @@ const Dashboard = () => {
                 {/* Dashboard Stats Section */}
                 <div className="grid grid-cols-4 gap-4 mb-6">
                     {/* Vehicle Stats */}
-                    <div className="p-4 rounded-lg shadow-md text-white bg-blue-600 flex flex-col items-center">
+                    <div className="p-4 rounded-lg shadow-md text-white bg-blue-600 flex flex-col items-center hover:bg-blue-700 transform hover:scale-105 transition-all duration-300 ease-in-out">
                         <div className="text-4xl">{dashboardStats[0].icon}</div>
                         <h3 className="text-lg font-semibold mt-2">{dashboardStats[0].title}</h3>
                         <p className="text-3xl font-bold mt-2">{dashboardStats[0].value}</p>
@@ -123,7 +108,7 @@ const Dashboard = () => {
                     </div>
 
                     {/* Available Vehicles */}
-                    <div className="p-4 rounded-lg shadow-md text-white bg-green-600 flex flex-col items-center">
+                    <div className="p-4 rounded-lg shadow-md text-white bg-green-600 flex flex-col items-center hover:bg-green-700 transform hover:scale-105 transition-all duration-300 ease-in-out">
                         <div className="text-4xl">{dashboardStats[1].icon}</div>
                         <h3 className="text-lg font-semibold mt-2">{dashboardStats[1].title}</h3>
                         <p className="text-3xl font-bold mt-2">{dashboardStats[1].value}</p>
@@ -131,7 +116,7 @@ const Dashboard = () => {
                     </div>
 
                     {/* Drivers Registered */}
-                    <div className="p-4 rounded-lg shadow-md text-white bg-yellow-600 flex flex-col items-center">
+                    <div className="p-4 rounded-lg shadow-md text-white bg-yellow-600 flex flex-col items-center hover:bg-yellow-700 transform hover:scale-105 transition-all duration-300 ease-in-out">
                         <div className="text-4xl">{dashboardStats[2].icon}</div>
                         <h3 className="text-lg font-semibold mt-2">{dashboardStats[2].title}</h3>
                         <p className="text-3xl font-bold mt-2">{dashboardStats[2].value}</p>
@@ -139,7 +124,7 @@ const Dashboard = () => {
                     </div>
 
                     {/* Upcoming Maintenance */}
-                    <div className="p-4 rounded-lg shadow-md text-white bg-red-600 flex flex-col items-center">
+                    <div className="p-4 rounded-lg shadow-md text-white bg-red-600 flex flex-col items-center hover:bg-red-700 transform hover:scale-105 transition-all duration-300 ease-in-out">
                         <div className="text-4xl">{dashboardStats[3].icon}</div>
                         <h3 className="text-lg font-semibold mt-2">{dashboardStats[3].title}</h3>
                         <p className="text-3xl font-bold mt-2">{dashboardStats[3].value}</p>
