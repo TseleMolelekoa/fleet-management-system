@@ -23,12 +23,18 @@ const Dashboard = () => {
             case 'addFleetUsage':
                 return <AddFleetUsageForm onAddFleet={handleAddFleet} onFleetUsageChange={handleFleetUsageChange} />;
             case 'addMaintenance':
-                return <AddMaintenanceForm onAddMaintenance={handleAddMaintenance} />;
+                return <AddMaintenanceForm onAddMaintenance={handleAddMaintenance} onSubmit={handleSubmit} />;
             case 'addStats':
                 return <ViewStatsPage />;
             default:
                 return null;
         }
+    };
+
+    const handleSubmit = (event) => {
+        // Define what should happen when the form is submitted
+        event.preventDefault();
+        console.log("Form submitted");
     };
 
     const handleAddFleet = (newFleetData) => {
