@@ -14,9 +14,10 @@ const ViewStatsPage = () => {
             yearly: 0,
         }
     });
+    const [maintenanceRecords, setMaintenanceRecords] = useState([]);
 
     useEffect(() => {
-        // Fetch driver and vehicle stats from your backend
+        // Fetch data here
         fetch('/api/driver-stats')
             .then((res) => res.json())
             .then((data) => setDriverStats(data))
@@ -27,20 +28,48 @@ const ViewStatsPage = () => {
             .then((data) => setVehicleStats(data))
             .catch((err) => console.error('Error fetching vehicle stats:', err));
 
-        // Fetch company-level stats
         fetch('/api/company-stats')
             .then((res) => res.json())
             .then((data) => setCompanyStats(data))
             .catch((err) => console.error('Error fetching company stats:', err));
+
+        fetch('/api/maintenance-records')
+            .then((res) => res.json())
+            .then((data) => setMaintenanceRecords(data))
+            .catch((err) => console.error('Error fetching maintenance records:', err));
     }, []);
 
+    // Categorizing maintenance records
+    const categorizeMaintenance = () => {
+        const today = new Date();
+        const completed = [];
+        const inProgress = [];
+        const upcoming = [];
+
+        maintenanceRecords.forEach((record) => {
+            const maintenanceDate = new Date(record.maintenanceDate);
+            if (record.status === 'completed') {
+                completed.push(record);
+            } else if (record.status === 'in-progress') {
+                inProgress.push(record);
+            } else if (record.status === 'upcoming' && maintenanceDate >= today) {
+                upcoming.push(record);
+            }
+        });
+
+        return { completed, inProgress, upcoming };
+    };
+
+    const { completed, inProgress, upcoming } = categorizeMaintenance();
+
     return (
-        <div className="bg-gray-500 min-h-screen p-7">
-            <div className="container mx-auto">
-                <h2 className="text-3xl font-semibold text-gray-800 mb-6">Company Performance Stats</h2>
-                {/* Drivers Section */}
+        <div className="bg-gray-650 min-h-screen flex items-center justify-center p-7">
+            <div className="w-full max-w-6xl mx-auto">
+                <h2 className="text-3xl font-semibold text-white mb-6 text-center">Company Performance Stats</h2>
+
+                {/* Driver Performance Section */}
                 <div className="mb-8">
-                    <h3 className="text-2xl font-bold text-gray-700 mb-4">Driver Performance</h3>
+                    <h3 className="text-2xl font-bold text-white mb-4">Driver Performance</h3>
                     <div className="overflow-x-auto">
                         <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
                             <thead className="bg-gray-200">
@@ -63,9 +92,9 @@ const ViewStatsPage = () => {
                     </div>
                 </div>
 
-                {/* Vehicles Section */}
+                {/* Vehicle Status Section */}
                 <div className="mb-8">
-                    <h3 className="text-2xl font-bold text-gray-700 mb-4">Vehicle Status</h3>
+                    <h3 className="text-2xl font-bold text-white mb-4">Vehicle Status</h3>
                     <div className="overflow-x-auto">
                         <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
                             <thead className="bg-gray-200">
@@ -94,23 +123,84 @@ const ViewStatsPage = () => {
                     </div>
                 </div>
 
+                {/* Maintenance Records Section */}
+                <div className="mb-8">
+                    <h3 className="text-2xl font-bold text-white mb-4">Maintenance Overview</h3>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+
+                        {/* Completed Maintenance */}
+                        <div className="p-6 bg-green-600 rounded-lg shadow-lg border border-green-300 hover:bg-green-400 hover:shadow-xl transition duration-900 ease-in-out">
+                            <h4 className="text-lg font-semibold text-green-950">Completed Maintenance</h4>
+                            {completed.length > 0 ? (
+                                completed.map((record, index) => (
+                                    <div key={index} className="mb-4">
+                                        <p className="font-medium text-gray-800">Vehicle ID: {record.vehicleId}</p>
+                                        <p className="text-sm text-gray-600">Date: {record.maintenanceDate}</p>
+                                        <p className="text-sm text-gray-800">Description: {record.description}</p>
+                                    </div>
+                                ))
+                            ) : (
+                                <p>No vehicles have completed maintenance.</p>
+                            )}
+                        </div>
+
+                        {/* In-Progress Maintenance */}
+                        <div className="p-6 bg-yellow-600 rounded-lg shadow-lg border border-yellow-300 hover:bg-yellow-400 hover:shadow-xl transition duration-900 ease-in-out">
+                            <h4 className="text-lg font-semibold text-yellow-950">Currently in Maintenance</h4>
+                            {inProgress.length > 0 ? (
+                                inProgress.map((record, index) => (
+                                    <div key={index} className="mb-4">
+                                        <p className="font-medium text-gray-800">Vehicle ID: {record.vehicleId}</p>
+                                        <p className="text-sm text-gray-600">Date: {record.maintenanceDate}</p>
+                                        <p className="text-sm text-gray-800">Description: {record.description}</p>
+                                    </div>
+                                ))
+                            ) : (
+                                <p>No vehicles are currently in maintenance.</p>
+                            )}
+                        </div>
+
+                        {/* Upcoming Maintenance */}
+                        <div className="p-6 bg-blue-600 rounded-lg shadow-lg border border-blue-300 hover:bg-blue-400 hover:shadow-xl transition duration-900 ease-in-out">
+                            <h4 className="text-lg font-semibold text-blue-800">Upcoming Maintenance</h4>
+                            {upcoming.length > 0 ? (
+                                upcoming.map((record, index) => (
+                                    <div key={index} className="mb-4">
+                                        <p className="font-medium text-gray-800">Vehicle ID: {record.vehicleId}</p>
+                                        <p className="text-sm text-gray-600">Scheduled Date: {record.maintenanceDate}</p>
+                                        <p className="text-sm text-gray-800">Description: {record.description}</p>
+                                    </div>
+                                ))
+                            ) : (
+                                <p>No vehicles are scheduled for upcoming maintenance.</p>
+                            )}
+                        </div>
+                    </div>
+                </div>
+
                 {/* Company Stats Section */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-                    <div className="p-6 rounded-lg shadow-md bg-blue-500 text-white">
-                        <h4 className="text-lg font-semibold">New Drivers</h4>
-                        <p>Total New Drivers: {companyStats.newDrivers}</p>
-                        <p>Drivers Left: {companyStats.leftDrivers}</p>
-                        <p>Cost for New Drivers: R{companyStats.newDriversCost}</p>
+                <h3 className="text-2xl font-bold text-white mb-4">Company Overview</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                    {/* New Drivers */}
+                    <div className="p-6 bg-blue-600 rounded-lg shadow-lg border border-blue-300 hover:bg-blue-600 hover:shadow-xl transition duration-900 ease-in-out">
+                        <h4 className="text-lg font-semibold text-white">New Drivers</h4>
+                        <p className="text-sm text-white">Total New Drivers: {companyStats.newDrivers}</p>
+                        <p className="text-sm text-white">Drivers Left: {companyStats.leftDrivers}</p>
+                        <p className="text-sm text-white">Cost for New Drivers: R{companyStats.newDriversCost}</p>
                     </div>
-                    <div className="p-6 rounded-lg shadow-md bg-green-500 text-white">
-                        <h4 className="text-lg font-semibold">Fleet Transportation</h4>
-                        <p>Weekly Transported: {companyStats.fleetTransported.weekly} tons</p>
-                        <p>Monthly Transported: {companyStats.fleetTransported.monthly} tons</p>
-                        <p>Yearly Transported: {companyStats.fleetTransported.yearly} tons</p>
+
+                    {/* Fleet Transportation */}
+                    <div className="p-6 bg-green-600 rounded-lg shadow-lg border border-green-300 hover:bg-green-600 hover:shadow-xl transition duration-900 ease-in-out">
+                        <h4 className="text-lg font-semibold text-white">Fleet Transportation</h4>
+                        <p className="text-sm text-white">Weekly Transported: {companyStats.fleetTransported.weekly} tons</p>
+                        <p className="text-sm text-white">Monthly Transported: {companyStats.fleetTransported.monthly} tons</p>
+                        <p className="text-sm text-white">Yearly Transported: {companyStats.fleetTransported.yearly} tons</p>
                     </div>
-                    <div className="p-6 rounded-lg shadow-md bg-yellow-500 text-white">
-                        <h4 className="text-lg font-semibold">New Vehicles</h4>
-                        <p>Total Cost for New Vehicles: R{companyStats.newVehiclesCost}</p>
+
+                    {/* New Vehicles */}
+                    <div className="p-6 bg-yellow-600 rounded-lg shadow-lg border border-yellow-300 hover:bg-yellow-600 hover:shadow-xl transition duration-900 ease-in-out">
+                        <h4 className="text-lg font-semibold text-white">New Vehicles</h4>
+                        <p className="text-sm text-white">Total Cost for New Vehicles: R{companyStats.newVehiclesCost}</p>
                     </div>
                 </div>
             </div>

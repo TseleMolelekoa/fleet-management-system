@@ -4,6 +4,7 @@ import AddDriverForm from './AddDrivers';
 import AddFleetUsageForm from './AddFleetUsage';
 import AddMaintenanceForm from './AddMaintenanceForm';
 import ViewStatsPage from './ViewStatsPage';
+import '../App.jsx'
 
 const Dashboard = () => {
     const [dashboardStats, setDashboardStats] = useState([

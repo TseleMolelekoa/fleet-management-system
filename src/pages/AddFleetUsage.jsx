@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 const AddFleetUsageForm = () => {
     const [usageDate, setUsageDate] = useState('');
