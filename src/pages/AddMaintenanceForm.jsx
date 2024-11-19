@@ -1,103 +1,110 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 
-import PropTypes from 'prop-types';
+const AddMaintenanceForm = () => {
+    const [formData, setFormData] = useState({
+        vehicleId: '',
+        description: '',
+        maintenanceDate: '',
+        status: 'upcoming', // Default status
+    });
+    const [loading, setLoading] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
 
-const MaintenanceForm = ({ onSubmit }) => {
-    const [vehicleId, setVehicleId] = useState('');
-    const [maintenanceDate, setMaintenanceDate] = useState('');
-    const [description, setDescription] = useState('');
-    const [cost, setCost] = useState('');
+    const handleChange = (e) => {
+        setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
 
-    // Handler for form submission
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        const maintenanceData = {
-            vehicleId,
-            maintenanceDate,
-            description,
-            cost,
-        };
-        // Use the onSubmit callback to pass data to the parent component
-        onSubmit(maintenanceData);
+        setLoading(true);
+        setErrorMessage('');
+        try {
+            const response = await fetch('http://localhost:5000/api/maintenance', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData),
+            });
 
-        // Reset form fields
-        setVehicleId('');
-        setMaintenanceDate('');
-        setDescription('');
-        setCost('');
+            if (response.ok) {
+                alert('Maintenance record saved successfully');
+                setFormData({ vehicleId: '', description: '', maintenanceDate: '', status: 'upcoming' });
+            } else {
+                const errorData = await response.json();
+                setErrorMessage(errorData.message || 'Failed to save maintenance record');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            setErrorMessage('Error occurred while saving maintenance record');
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
-        <div className="bg-white p-6 rounded-lg shadow-md">
-            <h2 className="text-2xl font-semibold mb-4">Add Maintenance Record</h2>
-            <form onSubmit={handleSubmit} className="space-y-4">
-                {/* Vehicle ID Input */}
-                <div>
-                    <label className="block font-medium mb-1">Vehicle ID</label>
-                    <input
-                        type="text"
-                        placeholder="Enter Vehicle ID"
-                        value={vehicleId}
-                        onChange={(e) => setVehicleId(e.target.value)}
-                        className="w-full p-2 border rounded"
-                        required
-                    />
-                </div>
-
-                {/* Maintenance Date Input */}
-                <div>
-                    <label className="block font-medium mb-1">Maintenance Date</label>
-                    <input
-                        type="date"
-                        value={maintenanceDate}
-                        onChange={(e) => setMaintenanceDate(e.target.value)}
-                        className="w-full p-2 border rounded"
-                        required
-                    />
-                </div>
-
-                {/* Description Input */}
-                <div>
-                    <label className="block font-medium mb-1">Description</label>
-                    <textarea
-                        placeholder="Brief description of the maintenance"
-                        value={description}
-                        onChange={(e) => setDescription(e.target.value)}
-                        className="w-full p-2 border rounded"
-                        rows="4"
-                        required
-                    ></textarea>
-                </div>
-
-                {/* Cost Input */}
-                <div>
-                    <label className="block font-medium mb-1">Cost</label>
-                    <input
-                        type="number"
-                        placeholder="Enter cost"
-                        value={cost}
-                        onChange={(e) => setCost(e.target.value)}
-                        className="w-full p-2 border rounded"
-                        min="0"
-                        step="0.01"
-                        required
-                    />
-                </div>
-
-                {/* Submit Button */}
-                <button
-                    type="submit"
-                    className="w-full bg-blue-600 text-white p-3 rounded hover:bg-blue-700"
+        <form onSubmit={handleSubmit} className="p-4 bg-white shadow-md rounded-lg">
+            <div className="mb-4">
+                <label className="block text-gray-700">Vehicle ID:</label>
+                <input
+                    type="text"
+                    name="vehicleId"
+                    value={formData.vehicleId}
+                    onChange={handleChange}
+                    className="w-full p-2 border rounded"
+                    required
+                />
+            </div>
+            <div className="mb-4">
+                <label className="block text-gray-700">Description:</label>
+                <textarea
+                    name="description"
+                    value={formData.description}
+                    onChange={handleChange}
+                    className="w-full p-2 border rounded"
+                    required
+                />
+            </div>
+            <div className="mb-4">
+                <label className="block text-gray-700">Maintenance Date:</label>
+                <input
+                    type="date"
+                    name="maintenanceDate"
+                    value={formData.maintenanceDate}
+                    onChange={handleChange}
+                    className="w-full p-2 border rounded"
+                    required
+                />
+            </div>
+            <div className="mb-4">
+                <label className="block text-gray-700">Status:</label>
+                <select
+                    name="status"
+                    value={formData.status}
+                    onChange={handleChange}
+                    className="w-full p-2 border rounded"
                 >
-                    Submit Maintenance Record
-                </button>
-            </form>
-        </div>
+                    <option value="upcoming">Upcoming</option>
+                    <option value="in-progress">In Progress</option>
+                    <option value="completed">Completed</option>
+                </select>
+            </div>
+
+            {errorMessage && (
+                <div className="mb-4 text-red-500">
+                    {errorMessage}
+                </div>
+            )}
+
+            <button
+                type="submit"
+                className={`w-full ${loading ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-500'} text-white py-2 rounded hover:bg-blue-600`}
+                disabled={loading}
+            >
+                {loading ? 'Saving...' : 'Add Maintenance Record'}
+            </button>
+        </form>
     );
 };
 
-MaintenanceForm.propTypes = {
-    onSubmit: PropTypes.func.isRequired,
-};
-
-export default MaintenanceForm;
+export default AddMaintenanceForm;
